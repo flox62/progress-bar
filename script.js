@@ -1,13 +1,13 @@
-// Fonction pour mettre à jour le progrès de la section
+// Function to update the progress of the section
 function updateProgress(section) {
     const checkboxes = section.querySelectorAll('.task-checkbox');
     const checked = section.querySelectorAll('.task-checkbox:checked');
     const progressBar = section.querySelector('.progress-bar');
 
-    const progress = checkboxes.length > 0 ? (checked.length / checkboxes.length) * 100 : 0; // Vérifier si des tâches sont présentes
+    const progress = (checked.length / checkboxes.length) * 100;
     progressBar.style.width = progress + '%';
 
-    // Sauvegarder le progrès dans le cache du navigateur
+    // Save the progress in the browser cache
     const sectionTitle = section.querySelector('.section-title').value;
     const tasks = [];
     checkboxes.forEach(checkbox => {
@@ -20,94 +20,51 @@ function updateProgress(section) {
         progress: progress,
         tasks: tasks
     };
-    localStorage.setItem(sectionTitle, JSON.stringify(sectionData)); // Utiliser le titre de la section comme clé
+    localStorage.setItem(sectionTitle, JSON.stringify(sectionData)); // Use the section title as the key
 }
 
-// Fonction pour charger les données depuis le cache du navigateur lors du chargement de la page
-window.onload = function() {
-    const progressSections = document.getElementById('progressSections');
-    for (let i = 0; i < localStorage.length; i++) {
-        const sectionTitle = localStorage.key(i);
-        const sectionData = JSON.parse(localStorage.getItem(sectionTitle));
-        if (sectionData && sectionData.title && sectionData.progress) {
-            addProgressSectionFromStorage(sectionData, progressSections);
-        }
-    }
-};
+// Function to add a new task
+function addTask(section) {
+    const taskContainer = section.querySelector('.task-container');
+    const taskDiv = document.createElement('div');
+    taskDiv.className = 'task';
 
-// Fonction pour créer une section de progression à partir des données sauvegardées
-function addProgressSectionFromStorage(sectionData, container) {
-    const sectionDiv = document.createElement('div');
-    sectionDiv.className = 'progress-section';
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.className = 'task-checkbox';
+    checkbox.id = `task-${Date.now()}`;
+    checkbox.onchange = () => updateProgress(section);
 
-    const sectionTitle = document.createElement('input');
-    sectionTitle.type = 'text';
-    sectionTitle.className = 'section-title';
-    sectionTitle.value = sectionData.title; // Utiliser le titre récupéré depuis le stockage
-    sectionTitle.placeholder = 'Titre de la section';
+    const checkboxLabel = document.createElement('label');
+    checkboxLabel.setAttribute('for', checkbox.id);
 
-    const taskContainer = document.createElement('div');
-    taskContainer.className = 'task-container';
+    const textBox = document.createElement('input');
+    textBox.type = 'text';
+    textBox.value = 'New Task';
 
-    const progressBarContainer = document.createElement('div');
-    progressBarContainer.className = 'progress-bar-container';
+    const deleteButton = document.createElement('button');
+    deleteButton.textContent = 'Delete';
+    deleteButton.onclick = () => {
+        taskDiv.remove();
+        updateProgress(section);
+    };
 
-    const progressBar = document.createElement('div');
-    progressBar.className = 'progress-bar';
-    progressBar.style.width = sectionData.progress + '%'; // Définir la largeur de la barre de progression
-
-    const deleteSectionBtn = document.createElement('button');
-    deleteSectionBtn.className = 'delete-section-btn';
-    deleteSectionBtn.textContent = '×';
-    deleteSectionBtn.onclick = () => deleteProgressSection(sectionDiv);
-
-    progressBarContainer.appendChild(progressBar);
-    sectionDiv.appendChild(sectionTitle);
-    sectionDiv.appendChild(taskContainer);
-    sectionDiv.appendChild(progressBarContainer);
-    sectionDiv.appendChild(deleteSectionBtn);
-
-    sectionData.tasks.forEach(taskData => {
-        const taskDiv = document.createElement('div');
-        taskDiv.className = 'task';
-
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.className = 'task-checkbox';
-        checkbox.checked = taskData.completed;
-        checkbox.onchange = () => updateProgress(sectionDiv); // Réattacher l'événement onchange
-
-        const checkboxLabel = document.createElement('label');
-
-        const textBox = document.createElement('input');
-        textBox.type = 'text';
-        textBox.value = taskData.task;
-
-        const deleteButton = document.createElement('button');
-        deleteButton.textContent = 'Supprimer';
-        deleteButton.onclick = () => {
-            taskDiv.remove();
-            updateProgress(sectionDiv);
-        };
-
-        taskDiv.appendChild(checkbox);
-        taskDiv.appendChild(checkboxLabel);
-        taskDiv.appendChild(textBox);
-        taskDiv.appendChild(deleteButton);
-        taskContainer.appendChild(taskDiv);
-    });
-
-    container.appendChild(sectionDiv);
+    taskDiv.appendChild(checkbox);
+    taskDiv.appendChild(checkboxLabel);
+    taskDiv.appendChild(textBox);
+    taskDiv.appendChild(deleteButton);
+    taskContainer.appendChild(taskDiv);
+    updateProgress(section); // Update progress when adding a new task
 }
 
-// Fonction pour supprimer une section de progression
+// Function to delete a progress section
 function deleteProgressSection(section) {
     const sectionTitle = section.querySelector('.section-title').value;
-    localStorage.removeItem(sectionTitle); // Supprimer les données associées à cette section
+    localStorage.removeItem(sectionTitle); // Remove the associated data for this section
     section.remove();
 }
 
-// Fonction pour ajouter une nouvelle section de progression
+// Function to add a new progress section
 function addProgressSection() {
     const progressSections = document.getElementById('progressSections');
     const sectionDiv = document.createElement('div');
@@ -116,7 +73,7 @@ function addProgressSection() {
     const sectionTitle = document.createElement('input');
     sectionTitle.type = 'text';
     sectionTitle.className = 'section-title';
-    sectionTitle.placeholder = 'Titre de la section';
+    sectionTitle.placeholder = 'Section Title';
 
     const taskContainer = document.createElement('div');
     taskContainer.className = 'task-container';
@@ -139,7 +96,7 @@ function addProgressSection() {
     sectionDiv.appendChild(deleteSectionBtn);
 
     const addTaskButton = document.createElement('button');
-    addTaskButton.textContent = 'Ajouter une tâche';
+    addTaskButton.textContent = 'Add Task';
     addTaskButton.style.marginTop = '10px';
     addTaskButton.style.backgroundColor = '#007bff';
     addTaskButton.style.color = 'white';
@@ -160,40 +117,99 @@ function addProgressSection() {
     progressSections.appendChild(sectionDiv);
 }
 
-// Fonction pour ajouter une nouvelle tâche
-function addTask(section) {
-    const taskContainer = section.querySelector('.task-container');
-    const taskDiv = document.createElement('div');
-    taskDiv.className = 'task';
+// Function to load data from browser cache when the page loads
+window.onload = function() {
+    const progressSections = document.getElementById('progressSections');
+    for (let i = 0; i < localStorage.length; i++) {
+        const sectionTitle = localStorage.key(i);
+        const sectionData = JSON.parse(localStorage.getItem(sectionTitle));
+        if (sectionData && sectionData.title && sectionData.progress) {
+            addProgressSectionFromStorage(sectionData, progressSections);
+        }
+    }
+};
 
-    const checkbox = document.createElement('input');
-    checkbox.type = 'checkbox';
-    checkbox.className = 'task-checkbox';
-    checkbox.id = `task-${Date.now()}`;
-    checkbox.onchange = () => updateProgress(section);
+function addProgressSectionFromStorage(sectionData, container) {
+    const sectionDiv = document.createElement('div');
+    sectionDiv.className = 'progress-section';
 
-    const checkboxLabel = document.createElement('label');
-    checkboxLabel.setAttribute('for', checkbox.id);
+    const sectionTitle = document.createElement('input');
+    sectionTitle.type = 'text';
+    sectionTitle.className = 'section-title';
+    sectionTitle.value = sectionData.title; // Use the retrieved title from storage
+    sectionTitle.placeholder = 'Section Title';
 
-    const textBox = document.createElement('input');
-    textBox.type = 'text';
-    textBox.value = 'Nouvelle tâche';
+    const taskContainer = document.createElement('div');
+    taskContainer.className = 'task-container';
 
-    const deleteButton = document.createElement('button');
-    deleteButton.textContent = 'Supprimer';
-    deleteButton.onclick = () => {
-        taskDiv.remove();
-        updateProgress(section);
+    const progressBarContainer = document.createElement('div');
+    progressBarContainer.className = 'progress-bar-container';
+
+    const progressBar = document.createElement('div');
+    progressBar.className = 'progress-bar';
+    progressBar.style.width = sectionData.progress + '%'; // Set the width of the progress bar
+
+    const deleteSectionBtn = document.createElement('button');
+    deleteSectionBtn.className = 'delete-section-btn';
+    deleteSectionBtn.textContent = '×';
+    deleteSectionBtn.onclick = () => deleteProgressSection(sectionDiv);
+
+    progressBarContainer.appendChild(progressBar);
+    sectionDiv.appendChild(sectionTitle);
+    sectionDiv.appendChild(taskContainer);
+    sectionDiv.appendChild(progressBarContainer);
+    sectionDiv.appendChild(deleteSectionBtn);
+
+    sectionData.tasks.forEach(taskData => {
+        const taskDiv = document.createElement('div');
+        taskDiv.className = 'task';
+
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.className = 'task-checkbox';
+        checkbox.checked = taskData.completed;
+
+        // Ajouter un gestionnaire d'événements onchange pour mettre à jour le progrès
+        checkbox.onchange = () => updateProgress(sectionDiv);
+
+        const checkboxLabel = document.createElement('label');
+
+        const textBox = document.createElement('input');
+        textBox.type = 'text';
+        textBox.value = taskData.task;
+
+        const deleteButton = document.createElement('button');
+        deleteButton.textContent = 'Delete';
+        deleteButton.onclick = () => {
+            taskDiv.remove();
+            updateProgress(sectionDiv);
+        };
+
+        taskDiv.appendChild(checkbox);
+        taskDiv.appendChild(checkboxLabel);
+        taskDiv.appendChild(textBox);
+        taskDiv.appendChild(deleteButton);
+        taskContainer.appendChild(taskDiv);
+    });
+
+    const addTaskButton = document.createElement('button');
+    addTaskButton.textContent = 'Add Task';
+    addTaskButton.style.marginTop = '10px';
+    addTaskButton.style.backgroundColor = '#007bff';
+    addTaskButton.style.color = 'white';
+    addTaskButton.style.border = 'none';
+    addTaskButton.style.borderRadius = '4px';
+    addTaskButton.style.padding = '10px 20px';
+    addTaskButton.style.cursor = 'pointer';
+    addTaskButton.style.transition = 'background-color 0.3s';
+    addTaskButton.onmouseover = function() {
+        addTaskButton.style.backgroundColor = '#0056b3';
     };
+    addTaskButton.onmouseout = function() {
+        addTaskButton.style.backgroundColor = '#007bff';
+    };
+    addTaskButton.onclick = () => addTask(sectionDiv);
 
-    taskDiv.appendChild(checkbox);
-    taskDiv.appendChild(checkboxLabel);
-    taskDiv.appendChild(textBox);
-    taskDiv.appendChild(deleteButton);
-    taskContainer.appendChild(taskDiv);
-    updateProgress(section); // Mettre à jour le progrès lors de l'ajout d'une nouvelle tâche
+    sectionDiv.appendChild(addTaskButton);
+    container.appendChild(sectionDiv);
 }
-
-// Fonction pour supprimer une tâche
-
-// Fin de la séquence.
