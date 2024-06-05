@@ -177,10 +177,9 @@ function updateProgress(section) {
     const sectionTitle = section.querySelector('.section-title').value;
     const tasks = [];
     checkboxes.forEach(checkbox => {
-        tasks.push({
-            task: checkbox.nextElementSibling.value,
-            completed: checkbox.checked
-        });
+        const taskName = checkbox.nextElementSibling.nextElementSibling.value;
+        const isChecked = checkbox.checked;
+        tasks.push({ task: taskName, completed: isChecked });
     });
     const sectionData = {
         title: sectionTitle,
@@ -221,6 +220,7 @@ function addTask(section) {
     taskDiv.appendChild(textBox);
     taskDiv.appendChild(deleteButton);
     taskContainer.appendChild(taskDiv);
+    updateProgress(section); // Update progress when adding a new task
 }
 
 // Function to delete a progress section
@@ -358,6 +358,7 @@ function addProgressSectionFromStorage(sectionData, container) {
 
     container.appendChild(sectionDiv);
 }
+
 
     </script>
 </body>
