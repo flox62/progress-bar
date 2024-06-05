@@ -13,7 +13,8 @@ function updateProgress(section) {
     checkboxes.forEach(checkbox => {
         const taskName = checkbox.nextElementSibling.nextElementSibling.value;
         const isChecked = checkbox.checked;
-        tasks.push({ task: taskName, completed: isChecked });
+        const checkboxId = checkbox.id;
+        tasks.push({ task: taskName, completed: isChecked, checkboxId: checkboxId });
     });
     const sectionData = {
         title: sectionTitle,
@@ -168,6 +169,7 @@ function addProgressSectionFromStorage(sectionData, container) {
         checkbox.type = 'checkbox';
         checkbox.className = 'task-checkbox';
         checkbox.checked = taskData.completed;
+        checkbox.id = taskData.checkboxId; // Set the checkbox ID from stored data
 
         // Ajouter un gestionnaire d'événements onchange pour mettre à jour le progrès
         checkbox.onchange = () => updateProgress(sectionDiv);
@@ -196,20 +198,19 @@ function addProgressSectionFromStorage(sectionData, container) {
     addTaskButton.textContent = 'Add Task';
     addTaskButton.style.marginTop = '10px';
     addTaskButton.style.backgroundColor = '#007bff';
-    addTaskButton.style.color = 'white';
+    addTaskButton.style.color= 'white';
     addTaskButton.style.border = 'none';
     addTaskButton.style.borderRadius = '4px';
     addTaskButton.style.padding = '10px 20px';
     addTaskButton.style.cursor = 'pointer';
     addTaskButton.style.transition = 'background-color 0.3s';
     addTaskButton.onmouseover = function() {
-        addTaskButton.style.backgroundColor = '#0056b3';
+    addTaskButton.style.backgroundColor = '#0056b3';
     };
     addTaskButton.onmouseout = function() {
-        addTaskButton.style.backgroundColor = '#007bff';
+    addTaskButton.style.backgroundColor = '#007bff';
     };
     addTaskButton.onclick = () => addTask(sectionDiv);
-
     sectionDiv.appendChild(addTaskButton);
     container.appendChild(sectionDiv);
 }
