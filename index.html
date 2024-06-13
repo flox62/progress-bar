@@ -8,6 +8,10 @@
     <script src="script.js" defer></script>
 </head>
 <body>
+    <div class="upload-container">
+        <input type="file" id="backgroundUpload" accept="image/*" style="display: none;" onchange="uploadBackground(event)">
+        <button onclick="document.getElementById('backgroundUpload').click()">Upload Background</button>
+    </div>
     <div class="container">
         <div id="progressSections">
             <!-- Progress sections will be added here -->
@@ -16,6 +20,5 @@
             <button onclick="addProgressSection()">Add Progress Section</button>
         </div>
     </div>
-
 </body>
 </html>

@@ -1,3 +1,17 @@
+// Function to handle background image upload
+function uploadBackground(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.body.style.backgroundImage = `url(${e.target.result})`;
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+// Existing functions...
+
 // Function to update the progress of the section
 function updateProgress(section) {
     const checkboxes = section.querySelectorAll('.task-checkbox');
@@ -171,7 +185,7 @@ function addProgressSectionFromStorage(sectionData, container) {
         checkbox.checked = taskData.completed;
         checkbox.id = taskData.checkboxId; // Set the checkbox ID from stored data
 
-        // Ajouter un gestionnaire d'événements onchange pour mettre à jour le progrès
+        // Add an onchange event handler to update progress
         checkbox.onchange = () => updateProgress(sectionDiv);
 
         const checkboxLabel = document.createElement('label');
@@ -198,19 +212,18 @@ function addProgressSectionFromStorage(sectionData, container) {
     addTaskButton.textContent = 'Add Task';
     addTaskButton.style.marginTop = '10px';
     addTaskButton.style.backgroundColor = '#007bff';
-    addTaskButton.style.color= 'white';
-    addTaskButton.style.border = 'none';
+    addTaskButton.style.color = 'white';
+    addTaskButton.style.border= 'none';
     addTaskButton.style.borderRadius = '4px';
     addTaskButton.style.padding = '10px 20px';
     addTaskButton.style.cursor = 'pointer';
     addTaskButton.style.transition = 'background-color 0.3s';
     addTaskButton.onmouseover = function() {
-    addTaskButton.style.backgroundColor = '#0056b3';
+        addTaskButton.style.backgroundColor = '#0056b3';
     };
     addTaskButton.onmouseout = function() {
-    addTaskButton.style.backgroundColor = '#007bff';
+        addTaskButton.style.backgroundColor = '#007bff';
     };
     addTaskButton.onclick = () => addTask(sectionDiv);
-    sectionDiv.appendChild(addTaskButton);
     container.appendChild(sectionDiv);
 }

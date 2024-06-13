@@ -6,7 +6,36 @@ body {
     align-items: center;
     margin: 0;
     padding: 20px;
+    background-size: cover; /* Ensure the background image covers the entire page */
+    background-position: center; /* Center the background image */
+    transition: background-image 0.3s; /* Smooth transition for background image change */
 }
+
+.upload-container {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+}
+
+.upload-container button {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.upload-container button:hover {
+    background-color: #45a049;
+}
+
+.container {
+    width: 80%;
+    max-width: 600px;
+}
+
 .container {
     width: 80%;
     max-width: 600px;
